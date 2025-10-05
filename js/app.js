@@ -1,7 +1,7 @@
 const BACKEND_URL = "https://proxyserver-59li.onrender.com";
 
 // ------------------ GLOBALS ------------------
-let allTeams = []; // store all fetched teams
+let allTeams = [];
 let activeSport = "Cricket"; // default sport filter
 let searchTerm = ""; // store current search term
 
