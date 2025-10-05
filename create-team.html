@@ -39,32 +39,33 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
       <div class="container">
-        <a class="navbar-brand" href="index.html">← Back to Dashboard</a>
+        <a class="navbar-brand" href="index.html">← डैशबोर्ड पर वापस जाएँ</a>
       </div>
     </nav>
 
     <!-- Create Team Form -->
     <div class="container my-5 p-4 bg-white rounded shadow">
-      <h3 class="text-center mb-4 text-primary">Create New Team</h3>
+      <h3 class="text-center mb-4 text-primary">अपनी टीम ऐड करे</h3>
 
       <form id="teamForm">
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label">Sport</label>
+            <label class="form-label">खेल</label>
             <select class="form-select" name="sport" required>
-              <option value="">Select Sport</option>
-              <option>Cricket</option>
-              <option>Volleyball</option>
+              <option value="">खेल चुने</option>
+              <option>क्रिकेट</option>
+              <option>वॉलीबॉल</option>
+              <option>शूटिंग बॉल</option>
             </select>
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">Team Name</label>
+            <label class="form-label">टीम का नाम</label>
             <input type="text" class="form-control" name="teamName" required />
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Captain Name</label>
+            <label class="form-label">कप्तान का नाम</label>
             <input
               type="text"
               class="form-control"
@@ -74,31 +75,31 @@
           </div>
 
           <div class="col-md-4">
-            <label class="form-label">Captain Mobile</label>
+            <label class="form-label">कप्तान का मोबाइल नं.</label>
             <input type="text" class="form-control" name="captainMobile" />
           </div>
 
           <div class="col-md-6">
-            <label class="form-label">Captain Village</label>
+            <label class="form-label">कप्तान का गाँव</label>
             <input type="text" class="form-control" name="captainVillage" />
           </div>
         </div>
 
         <hr class="my-4" />
 
-        <h5>Add Players</h5>
+        <h5>खिलाड़ियों को जोड़ें</h5>
         <div id="playersContainer"></div>
         <button
           type="button"
           class="btn btn-outline-primary mt-2"
           onclick="addPlayerRow()"
         >
-          + Add Player
+          + खिलाड़ी जोड़ें
         </button>
 
         <div class="text-center mt-4">
           <button class="btn btn-primary px-4" type="submit">
-            Create Team
+            सबमिट टीम
           </button>
         </div>
       </form>

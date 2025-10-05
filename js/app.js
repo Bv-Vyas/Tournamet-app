@@ -2,7 +2,7 @@ const BACKEND_URL = "https://proxyserver-59li.onrender.com";
 
 // ------------------ GLOBALS ------------------
 let allTeams = [];
-let activeSport = "Cricket"; // default sport filter
+let activeSport = "क्रिकेट"; // default sport filter
 let searchTerm = ""; // store current search term
 
 // ------------------ LOADING SPINNER ------------------
@@ -94,7 +94,7 @@ function displayTeams() {
   }
 
   if (filteredTeams.length === 0) {
-    container.innerHTML = `<p class="text-center text-muted">No ${activeSport} teams found.</p>`;
+    container.innerHTML = `<p class="text-center text-muted">कोई ${activeSport} टीम नहीं मिली.</p>`;
     return;
   }
 
@@ -111,7 +111,6 @@ function displayTeams() {
         <td>${i + 1}</td>
         <td>${p.name}</td>
         <td>${p.father || "-"}</td>
-        <td>${p.role || "-"}</td>
         <td>${p.mobile || "-"}</td>
         <td>${p.village || "-"}</td>
       </tr>`
@@ -127,7 +126,7 @@ function displayTeams() {
           <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-dark bg-opacity-75 text-white">
             <h5 class="mb-1">${teamName}</h5>
             <p class="mb-0 small"><label class="badge bg-primary text-white">${sport}</label>
- | Captain: ${captain}</p>
+ | कप्तान: ${captain}</p>
           </div>
         </div>
         <div class="card-body">
@@ -136,32 +135,28 @@ function displayTeams() {
                   data-bs-target="#details-${index}" 
                   aria-expanded="false" 
                   aria-controls="details-${index}">
-            View Team Details
+            टीम विवरण देखें
           </button>
           <div class="collapse mt-3" id="details-${index}">
             <div class="card card-body bg-light">
-              <h6 class="text-primary">Captain Details</h6>
-              <p class="mb-1"><strong>Name:</strong> ${captain}</p>
-              <p class="mb-1"><strong>Email:</strong> ${
-                team["Captain Email"]
-              }</p>
-              <p class="mb-1"><strong>Mobile:</strong> ${
+              <h6 class="text-primary">कप्तान का विवरण</h6>
+              <p class="mb-1"><strong>नाम:</strong> ${captain}</p>
+              <p class="mb-1"><strong>मोबाइल नं.:</strong> ${
                 team["Captain Mobile"]
               }</p>
-              <p class="mb-3"><strong>Village:</strong> ${
+              <p class="mb-3"><strong>गाँव:</strong> ${
                 team["Captain Village"]
               }</p>
-              <h6 class="text-secondary">Players</h6>
+              <h6 class="text-secondary">खिलाडी</h6>
               <div class="table-responsive">
                 <table class="table table-bordered table-sm mb-0">
                   <thead class="table-primary">
                     <tr>
                       <th>#</th>
-                      <th>Name</th>
-                      <th>Father</th>
-                      <th>Role</th>
-                      <th>Mobile</th>
-                      <th>Village</th>
+                      <th>नाम</th>
+                      <th>पिता का नाम</th>
+                      <th>मोबाइल नंबर</th>
+                      <th>गाँव</th>
                     </tr>
                   </thead>
                   <tbody>${playersTable}</tbody>
@@ -184,34 +179,52 @@ function setupSportFilters() {
   // Create filter buttons dynamically
   container.innerHTML = `
     <div class="d-flex justify-content-center mb-4">
-      <button id="filter-cricket" class="btn me-2">Cricket</button>
-      <button id="filter-volleyball" class="btn">Volleyball</button>
+      <button id="filter-cricket" class="btn me-2">क्रिकेट</button>
+      <button id="filter-volleyball" class="btn">वॉलीबाल</button>
+      <button id="filter-Shooting Ball" class="btn">शूटिंग बॉल</button>
     </div>
   `;
 
   const cricketBtn = document.getElementById("filter-cricket");
   const volleyballBtn = document.getElementById("filter-volleyball");
+   const ShootingBallBtn = document.getElementById("filter-Shooting Ball");
   const searchInput = document.getElementById("teamSearch");
 
   // Set default active buttons
   cricketBtn.classList.add("btn-primary", "active");
   volleyballBtn.classList.add("btn-outline-primary");
+  ShootingBallBtn.classList.add("btn-outline-primary");
 
   // Sport filter events
   cricketBtn.addEventListener("click", () => {
-    activeSport = "Cricket";
+    activeSport = "क्रिकेट";
     cricketBtn.classList.add("btn-primary", "active");
     cricketBtn.classList.remove("btn-outline-primary");
     volleyballBtn.classList.remove("btn-primary", "active");
     volleyballBtn.classList.add("btn-outline-primary");
+     ShootingBallBtn.classList.remove("btn-primary", "active");
+    ShootingBallBtn.classList.add("btn-outline-primary");
     displayTeams();
   });
 
   volleyballBtn.addEventListener("click", () => {
-    activeSport = "Volleyball";
+    activeSport = "वॉलीबॉल";
     volleyballBtn.classList.add("btn-primary", "active");
     volleyballBtn.classList.remove("btn-outline-primary");
     cricketBtn.classList.remove("btn-primary", "active");
+    cricketBtn.classList.add("btn-outline-primary");
+    ShootingBallBtn.classList.remove("btn-primary", "active");
+    ShootingBallBtn.classList.add("btn-outline-primary");
+    displayTeams();
+  });
+
+  ShootingBallBtn.addEventListener("click", () => {
+    activeSport = "शूटिंग बॉल";
+    ShootingBallBtn.classList.add("btn-primary", "active");
+    ShootingBallBtn.classList.remove("btn-outline-primary");
+    volleyballBtn.classList.remove("btn-primary", "active");
+    volleyballBtn.classList.add("btn-outline-primary");
+     cricketBtn.classList.remove("btn-primary", "active");
     cricketBtn.classList.add("btn-outline-primary");
     displayTeams();
   });
@@ -285,11 +298,10 @@ function addPlayerRow() {
   const div = document.createElement("div");
   div.className = "row g-2 mb-2 player-row";
   div.innerHTML = `
-    <div class="col-md-3"><input type="text" class="form-control p-name" placeholder="Name" required></div>
-    <div class="col-md-2"><input type="text" class="form-control p-father" placeholder="Father Name"></div>
-    <div class="col-md-2"><input type="text" class="form-control p-role" placeholder="Role"></div>
-    <div class="col-md-2"><input type="text" class="form-control p-village" placeholder="Village"></div>
-    <div class="col-md-2"><input type="text" class="form-control p-mobile" placeholder="Mobile"></div>
+    <div class="col-md-3"><input type="text" class="form-control p-name" placeholder="नाम" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-father" placeholder="पिता का नाम"></div>
+    <div class="col-md-2"><input type="text" class="form-control p-village" placeholder="गाँव"></div>
+    <div class="col-md-2"><input type="text" class="form-control p-mobile" placeholder="मोबाइल नं."></div>
     <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></div>
   `;
   container.appendChild(div);
