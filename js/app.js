@@ -137,7 +137,7 @@ function displayTeams() {
                   aria-controls="details-${index}">
             टीम विवरण देखें
           </button>
-          <div class="collapse mt-3" id="details-${index}">
+          <div class="collapse mt-3" id="details-${index}" data-bs-parent="#teamsContainer">
             <div class="card card-body bg-light">
               <h6 class="text-primary">कप्तान का विवरण</h6>
               <p class="mb-1"><strong>नाम:</strong> ${captain}</p>
@@ -162,10 +162,10 @@ function displayTeams() {
                   <tbody>${playersTable}</tbody>
                 </table>
               </div>
-                <button class="btn btn-sm btn-warning mt-2 w-100" 
-                  onclick="openEditModal('${team.ID}')">
-                  Edit Team
-                </button>
+              <button class="btn btn-sm btn-warning mt-2 w-100" 
+                      onclick="openEditModal('${team.ID}')">
+                Edit Team
+              </button>
             </div>
           </div>
         </div>
@@ -539,3 +539,15 @@ window.onload = () => {
   const editForm = document.getElementById("editTeamForm");
   if (editForm) editForm.addEventListener("submit", saveEditedTeam);
 };
+
+// ------------------ Event Listener for closing cards ------------------
+document.addEventListener("click", function (event) {
+  const isButton = event.target.closest(".btn-outline-primary");
+  const isCollapse = event.target.closest(".collapse");
+  if (!isButton && !isCollapse) {
+    document.querySelectorAll(".collapse.show").forEach((el) => {
+      const bsCollapse = bootstrap.Collapse.getInstance(el);
+      if (bsCollapse) bsCollapse.hide();
+    });
+  }
+});
