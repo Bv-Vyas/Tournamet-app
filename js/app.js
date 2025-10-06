@@ -248,7 +248,6 @@ function setupTeamForm() {
       players.push({
         name: row.querySelector(".p-name").value,
         father: row.querySelector(".p-father").value,
-        role: row.querySelector(".p-role").value,
         village: row.querySelector(".p-village").value,
         mobile: row.querySelector(".p-mobile").value,
       });
@@ -259,7 +258,6 @@ function setupTeamForm() {
       sport: form.sport.value,
       teamName: form.teamName.value,
       captainName: form.captainName.value,
-      captainEmail: form.captainEmail.value,
       captainMobile: form.captainMobile.value,
       captainVillage: form.captainVillage.value,
       players,
