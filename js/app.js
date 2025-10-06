@@ -162,6 +162,10 @@ function displayTeams() {
                   <tbody>${playersTable}</tbody>
                 </table>
               </div>
+                <button class="btn btn-sm btn-warning mt-2 w-100" 
+                  onclick="openEditModal('${team.ID}')">
+                  Edit Team
+                </button>
             </div>
           </div>
         </div>
@@ -169,6 +173,132 @@ function displayTeams() {
     `;
     container.appendChild(card);
   });
+}
+
+// ------------------ EDIT MODAL ------------------
+function openEditModal(teamId) {
+  const team = allTeams.find((t) => t.ID === teamId);
+  if (!team) return showNotification("टीम नहीं मिली।", "danger");
+  editingTeamId = teamId;
+
+  const modal = new bootstrap.Modal(document.getElementById("editTeamModal"));
+  const form = document.getElementById("editTeamForm");
+
+  // Prefill captain details
+  form.sport.value = team.Sport;
+  form.sport.disabled = true;
+  form.teamName.value = team["Team Name"];
+  form.captainName.value = team["Captain Name"];
+  form.captainMobile.value = team["Captain Mobile"];
+  form.captainVillage.value = team["Captain Village"];
+
+  // Prefill players
+  const container = document.getElementById("editPlayersContainer");
+  container.innerHTML = "";
+  (team.players || []).forEach((p) => addEditPlayerRow(p));
+
+  modal.show();
+}
+
+// ------------------ ADD PLAYER ROW IN EDIT ------------------
+function addEditPlayerRow(player = {}) {
+  const container = document.getElementById("editPlayersContainer");
+  const div = document.createElement("div");
+  div.className = "row g-2 mb-2 player-row";
+  div.innerHTML = `
+    <div class="col-md-3"><input type="text" class="form-control p-name" placeholder="नाम" value="${
+      player.name || ""
+    }" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-father" placeholder="पिता का नाम" value="${
+      player.father || ""
+    }" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-village" placeholder="गाँव" value="${
+      player.village || ""
+    }" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-mobile" placeholder="मोबाइल नं." value="${
+      player.mobile || ""
+    }" required></div>
+    <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">Remove</button></div>
+  `;
+  container.appendChild(div);
+}
+
+// ------------------ SAVE EDITED TEAM ------------------
+async function saveEditedTeam(e) {
+  e.preventDefault();
+
+  const form = document.getElementById("editTeamForm");
+  const mobileRegex = /^[0-9]{10}$/;
+  const sport = form.sport.value.trim();
+  const teamName = form.teamName.value.trim();
+  const captainName = form.captainName.value.trim();
+  const captainMobile = form.captainMobile.value.trim();
+  const captainVillage = form.captainVillage.value.trim();
+
+  if (
+    !sport ||
+    !teamName ||
+    !captainName ||
+    !captainVillage ||
+    !mobileRegex.test(captainMobile)
+  ) {
+    return showNotification("कृपया सभी विवरण सही भरें।", "warning");
+  }
+
+  const playerRows = document.querySelectorAll(
+    "#editPlayersContainer .player-row"
+  );
+  if (playerRows.length === 0)
+    return showNotification("कम से कम एक खिलाड़ी होना चाहिए।", "warning");
+
+  const players = [];
+  for (let i = 0; i < playerRows.length; i++) {
+    const row = playerRows[i];
+    const name = row.querySelector(".p-name").value.trim();
+    const father = row.querySelector(".p-father").value.trim();
+    const village = row.querySelector(".p-village").value.trim();
+    const mobile = row.querySelector(".p-mobile").value.trim();
+
+    if (!name || !father || !village || !mobile || !mobileRegex.test(mobile)) {
+      return showNotification(`खिलाड़ी ${i + 1} का विवरण गलत है।`, "warning");
+    }
+    players.push({ name, father, village, mobile });
+  }
+
+  const body = {
+    action: "update",
+    ID: editingTeamId,
+    sport,
+    teamName,
+    captainName,
+    captainMobile,
+    captainVillage,
+    players,
+  };
+
+  try {
+    showLoading();
+    const res = await fetch(`${BACKEND_URL}/api`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.status === "success") {
+      showNotification("टीम सफलतापूर्वक अपडेट हुई!", "success");
+      bootstrap.Modal.getInstance(
+        document.getElementById("editTeamModal")
+      ).hide();
+      loadTeams();
+    } else {
+      showNotification(data.message || "अपडेट में त्रुटि", "danger");
+    }
+  } catch (err) {
+    console.error(err);
+    showNotification("अपडेट में विफल।", "danger");
+  } finally {
+    hideLoading();
+  }
 }
 
 // ------------------ SPORT FILTER TABS ------------------
@@ -180,14 +310,14 @@ function setupSportFilters() {
   container.innerHTML = `
     <div class="d-flex justify-content-center mb-4">
       <button id="filter-cricket" class="btn me-2">क्रिकेट</button>
-      <button id="filter-volleyball" class="btn">वॉलीबाल</button>
+      <button id="filter-volleyball" class="btn me-2">वॉलीबाल</button>
       <button id="filter-Shooting Ball" class="btn">शूटिंग बॉल</button>
     </div>
   `;
 
   const cricketBtn = document.getElementById("filter-cricket");
   const volleyballBtn = document.getElementById("filter-volleyball");
-   const ShootingBallBtn = document.getElementById("filter-Shooting Ball");
+  const ShootingBallBtn = document.getElementById("filter-Shooting Ball");
   const searchInput = document.getElementById("teamSearch");
 
   // Set default active buttons
@@ -202,7 +332,7 @@ function setupSportFilters() {
     cricketBtn.classList.remove("btn-outline-primary");
     volleyballBtn.classList.remove("btn-primary", "active");
     volleyballBtn.classList.add("btn-outline-primary");
-     ShootingBallBtn.classList.remove("btn-primary", "active");
+    ShootingBallBtn.classList.remove("btn-primary", "active");
     ShootingBallBtn.classList.add("btn-outline-primary");
     displayTeams();
   });
@@ -224,7 +354,7 @@ function setupSportFilters() {
     ShootingBallBtn.classList.remove("btn-outline-primary");
     volleyballBtn.classList.remove("btn-primary", "active");
     volleyballBtn.classList.add("btn-outline-primary");
-     cricketBtn.classList.remove("btn-primary", "active");
+    cricketBtn.classList.remove("btn-primary", "active");
     cricketBtn.classList.add("btn-outline-primary");
     displayTeams();
   });
@@ -243,23 +373,115 @@ function setupTeamForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Remove previous highlights
+    form
+      .querySelectorAll(".is-invalid")
+      .forEach((el) => el.classList.remove("is-invalid"));
+
+    const mobileRegex = /^[0-9]{10}$/;
+
+    // ✅ Captain Fields
+    const sport = form.sport.value.trim();
+    const teamName = form.teamName.value.trim();
+    const captainName = form.captainName.value.trim();
+    const captainMobile = form.captainMobile.value.trim();
+    const captainVillage = form.captainVillage.value.trim();
+
+    let valid = true;
+
+    if (!sport) {
+      form.sport.classList.add("is-invalid");
+      valid = false;
+    }
+    if (!teamName) {
+      form.teamName.classList.add("is-invalid");
+      valid = false;
+    }
+    if (!captainName) {
+      form.captainName.classList.add("is-invalid");
+      valid = false;
+    }
+    if (!captainVillage) {
+      form.captainVillage.classList.add("is-invalid");
+      valid = false;
+    }
+    if (!mobileRegex.test(captainMobile)) {
+      form.captainMobile.classList.add("is-invalid");
+      valid = false;
+      showNotification(
+        "कृपया कप्तान का सही मोबाइल नंबर दर्ज करें (10 अंक)।",
+        "warning"
+      );
+    }
+
+    if (!valid) {
+      showNotification(
+        "कृपया कप्तान और टीम की सभी जानकारी सही ढंग से भरें।",
+        "warning"
+      );
+      return;
+    }
+
+    // ✅ Validate Players
+    const playerRows = document.querySelectorAll(".player-row");
+    if (playerRows.length === 0) {
+      showNotification("कम से कम एक खिलाड़ी जोड़ना आवश्यक है।", "warning");
+      return;
+    }
+
     const players = [];
-    document.querySelectorAll(".player-row").forEach((row) => {
-      players.push({
-        name: row.querySelector(".p-name").value,
-        father: row.querySelector(".p-father").value,
-        village: row.querySelector(".p-village").value,
-        mobile: row.querySelector(".p-mobile").value,
-      });
+    let allPlayersValid = true;
+
+    playerRows.forEach((row, index) => {
+      const nameInput = row.querySelector(".p-name");
+      const fatherInput = row.querySelector(".p-father");
+      const villageInput = row.querySelector(".p-village");
+      const mobileInput = row.querySelector(".p-mobile");
+
+      const name = nameInput.value.trim();
+      const father = fatherInput.value.trim();
+      const village = villageInput.value.trim();
+      const mobile = mobileInput.value.trim();
+
+      [nameInput, fatherInput, villageInput, mobileInput].forEach((el) =>
+        el.classList.remove("is-invalid")
+      );
+
+      // Required field validation
+      if (!name || !father || !village || !mobile) {
+        allPlayersValid = false;
+        showNotification(
+          `कृपया खिलाड़ी ${index + 1} की सभी जानकारी भरें।`,
+          "warning"
+        );
+        if (!name) nameInput.classList.add("is-invalid");
+        if (!father) fatherInput.classList.add("is-invalid");
+        if (!village) villageInput.classList.add("is-invalid");
+        if (!mobile) mobileInput.classList.add("is-invalid");
+      }
+      // Mobile validation
+      else if (!mobileRegex.test(mobile)) {
+        mobileInput.classList.add("is-invalid");
+        allPlayersValid = false;
+        showNotification(
+          `खिलाड़ी ${index + 1} का मोबाइल नंबर अमान्य है (10 अंक)।`,
+          "warning"
+        );
+      }
+
+      players.push({ name, father, village, mobile });
     });
 
+    if (!allPlayersValid) return;
+
+    // ✅ All Valid
     const body = {
       action: "create",
-      sport: form.sport.value,
-      teamName: form.teamName.value,
-      captainName: form.captainName.value,
-      captainMobile: form.captainMobile.value,
-      captainVillage: form.captainVillage.value,
+      sport,
+      teamName,
+      captainName,
+      captainMobile,
+      captainVillage,
       players,
     };
 
@@ -273,17 +495,17 @@ function setupTeamForm() {
 
       const data = await res.json();
       if (data.status === "success") {
-        showNotification("Team created successfully!", "success");
+        showNotification("🎉 टीम सफलतापूर्वक बनाई गई!", "success");
         setTimeout(() => (window.location.href = "index.html"), 1500);
       } else {
         showNotification(
-          "Failed: " + (data.message || "Unknown error"),
+          "त्रुटि: " + (data.message || "अज्ञात त्रुटि"),
           "danger"
         );
       }
     } catch (err) {
       console.error(err);
-      showNotification("Failed to create team.", "danger");
+      showNotification("टीम बनाने में विफल।", "danger");
     } finally {
       hideLoading();
     }
@@ -297,10 +519,10 @@ function addPlayerRow() {
   div.className = "row g-2 mb-2 player-row";
   div.innerHTML = `
     <div class="col-md-3"><input type="text" class="form-control p-name" placeholder="नाम" required></div>
-    <div class="col-md-2"><input type="text" class="form-control p-father" placeholder="पिता का नाम"></div>
-    <div class="col-md-2"><input type="text" class="form-control p-village" placeholder="गाँव"></div>
-    <div class="col-md-2"><input type="text" class="form-control p-mobile" placeholder="मोबाइल नं."></div>
-    <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></div>
+    <div class="col-md-2"><input type="text" class="form-control p-father" placeholder="पिता का नाम" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-village" placeholder="गाँव" required></div>
+    <div class="col-md-2"><input type="text" class="form-control p-mobile" placeholder="मोबाइल नं." required></div>
+    <div class="col-md-1"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.parentElement.remove()">Remove</button></div>
   `;
   container.appendChild(div);
 }
@@ -312,4 +534,8 @@ window.onload = () => {
     setupSportFilters();
   }
   if (document.getElementById("teamForm")) setupTeamForm();
+
+  // Attach save edit event
+  const editForm = document.getElementById("editTeamForm");
+  if (editForm) editForm.addEventListener("submit", saveEditedTeam);
 };

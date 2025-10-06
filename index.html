@@ -68,9 +68,12 @@
     <main>
       <!-- Hero Section -->
       <header class="hero-section text-center bg-white py-5 shadow-sm">
-        <h1 class="fw-bold text-primary">पीपीएल 2025 लकड़वास में आपका स्वागत है</h1>
+        <h1 class="fw-bold text-primary">
+          पीपीएल 2025 लकड़वास में आपका स्वागत है
+        </h1>
         <p class="text-secondary">
-          यहाँ आप अपनी टीम लिस्ट ऐड कर सकते है और सारी टीमों की लिस्ट चेक कर सकते है 
+          यहाँ आप अपनी टीम लिस्ट ऐड कर सकते है और सारी टीमों की लिस्ट चेक कर
+          सकते है
         </p>
       </header>
 
@@ -97,7 +100,15 @@
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3 mt-4">
-      © 2025 PPL 2K25 | Developed with ❤️ by Team 7 Star
+      © 2025 PPL 2K25 | Presented by Team 7 Star <br />
+      Developed with ❤️ by
+      <a
+        href="https://www.instagram.com/bhaweshvyas_001/"
+        target="_blank"
+        class="text-primary text-decoration-none"
+      >
+        Bhawesh Vyas
+      </a>
     </footer>
 
     <!-- Bootstrap JS -->
@@ -105,5 +116,92 @@
 
     <!-- App JS -->
     <script src="js/app.js"></script>
+
+    <!-- EDIT TEAM MODAL -->
+    <div
+      class="modal fade"
+      id="editTeamModal"
+      tabindex="-1"
+      aria-labelledby="editTeamModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <form class="modal-content" id="editTeamForm">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editTeamModalLabel">Edit Team</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="sport"
+                  placeholder="खेल"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="teamName"
+                  placeholder="टीम नाम"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="captainName"
+                  placeholder="कप्तान का नाम"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="captainMobile"
+                  placeholder="मोबाइल नं."
+                />
+              </div>
+              <div class="col-md-3 mt-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  name="captainVillage"
+                  placeholder="गाँव"
+                />
+              </div>
+            </div>
+            <hr />
+            <h6>खिलाडी</h6>
+            <div id="editPlayersContainer"></div>
+            <button
+              type="button"
+              class="btn btn-sm btn-success mt-2"
+              onclick="addEditPlayerRow()"
+            >
+              Add Player
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary w-100">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Notification -->
+    <div
+      id="notificationContainer"
+      style="position: fixed; top: 20px; right: 20px; z-index: 2100"
+    ></div>
   </body>
 </html>

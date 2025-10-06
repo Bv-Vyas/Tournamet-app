@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Create Team | PPL 2K25</title>
+    <title>PPL 2K25</title>
+    <link rel="icon" href="images/PPL_logo.jpeg" type="image/png" />
 
     <!-- Bootstrap CSS -->
     <link
@@ -76,12 +77,22 @@
 
           <div class="col-md-4">
             <label class="form-label">कप्तान का मोबाइल नं.</label>
-            <input type="text" class="form-control" name="captainMobile" />
+            <input
+              type="tel"
+              class="form-control"
+              name="captainMobile"
+              required
+            />
           </div>
 
           <div class="col-md-6">
             <label class="form-label">कप्तान का गाँव</label>
-            <input type="text" class="form-control" name="captainVillage" />
+            <input
+              type="text"
+              class="form-control"
+              name="captainVillage"
+              required
+            />
           </div>
         </div>
 
@@ -98,9 +109,7 @@
         </button>
 
         <div class="text-center mt-4">
-          <button class="btn btn-primary px-4" type="submit">
-            सबमिट टीम
-          </button>
+          <button class="btn btn-primary px-4" type="submit">सबमिट टीम</button>
         </div>
       </form>
     </div>
