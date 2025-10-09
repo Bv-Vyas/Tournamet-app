@@ -162,7 +162,7 @@ function displayTeams() {
                   <tbody>${playersTable}</tbody>
                 </table>
               </div>
-              <button class="btn btn-sm btn-warning mt-2 w-100" 
+              <button class="d-none btn btn-sm btn-warning mt-2 w-100" 
                       onclick="openEditModal('${team.ID}')">
                 Edit Team
               </button>
